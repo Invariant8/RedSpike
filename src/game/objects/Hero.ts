@@ -39,8 +39,9 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 
           // Set up physics body
           const body = this.body as Phaser.Physics.Arcade.Body;
-          body.setSize(30, 50);
-          body.setOffset(17, 10);
+          // Adjust body to match visual size (96x96) and align bottom with feet
+          body.setSize(44, 80);
+          body.setOffset(26, 46); // Center horizontally, align bottom (16+80=96)
           body.setCollideWorldBounds(false);
 
           // Set up input

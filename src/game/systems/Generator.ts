@@ -284,8 +284,22 @@ export class Generator {
 
 
                // Calculate proper Y based on level 0's position
-               const baseY = this.levels.get(0)?.y || 0;
-               const newLevelY = baseY - this.currentHighestLevel * this.difficulty.getLevelVerticalGap();
+
+               // Get the Y position of the previous level (level - 1)
+               const prevLevelData = this.levels.get(this.currentHighestLevel - 1);
+               let prevY = this.levels.get(0)?.y || 0; // Default to level 0 y if not found
+
+               if (prevLevelData) {
+                    prevY = prevLevelData.y;
+               } else if (this.currentHighestLevel > 1) {
+                    // Fallback if previous level missing (shouldn't happen with sequential generation)
+                    // Estimate based on level 0
+                    prevY = (this.levels.get(0)?.y || 0) - (this.currentHighestLevel - 1) * LEVEL_VERTICAL_GAP;
+               }
+
+               // Calculate new Y using the CURRENT gap setting from difficulty
+               const gap = this.difficulty.getLevelVerticalGap();
+               const newLevelY = prevY - gap;
 
                this.createLevel(this.currentHighestLevel, newLevelY);
                this.difficulty.setLevel(this.currentHighestLevel);

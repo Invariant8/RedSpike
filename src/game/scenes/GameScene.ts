@@ -149,6 +149,10 @@ export class GameScene extends Phaser.Scene {
           if (star.active) {
                const points = star.collect();
                hero.addScore(points);
+
+               // Immediately disable physics body to prevent multiple collisions
+               const body = star.body as Phaser.Physics.Arcade.Body;
+               body.enable = false;
           }
      }
 

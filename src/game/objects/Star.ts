@@ -21,6 +21,7 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
           const body = this.body as Phaser.Physics.Arcade.Body;
           body.setAllowGravity(false);
           body.setCircle(16);
+          body.enable = true; // Ensure enabled initially
 
           this.setActive(false);
           this.setVisible(false);
@@ -33,6 +34,10 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
           this.setPosition(x, y);
           this.setActive(true);
           this.setVisible(true);
+
+          const body = this.body as Phaser.Physics.Arcade.Body;
+          if (body) body.enable = true;
+
           this.value = Math.round(10 * valueMultiplier);
 
           // Add floating animation
