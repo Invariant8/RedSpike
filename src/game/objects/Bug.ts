@@ -67,8 +67,17 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
           const heroX = this.heroRef.x;
           const heroY = this.heroRef.y;
 
-          // Reset Y velocity to stay on platform (prevent any drift)
+          // CRITICAL: Lock Y position to divider surface every frame
+          // This prevents any downward drift from physics accumulation
+          const fixedY = bounds.top - 20;
+          this.y = fixedY;
           this.setVelocityY(0);
+
+          // Also ensure the physics body knows about this position
+          const body = this.body as Phaser.Physics.Arcade.Body;
+          if (body) {
+               body.y = fixedY - body.halfHeight;
+          }
 
           // Check if hero is on the same level (within jumping distance)
           const dividerY = this.targetDivider.getY();
@@ -90,7 +99,6 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
                }
           } else {
                // Patrol on the divider (patrol back and forth)
-               const body = this.body as Phaser.Physics.Arcade.Body;
                if (this.x <= bounds.left + 30) {
                     this.setVelocityX(this.speed);
                } else if (this.x >= bounds.right - 30) {
