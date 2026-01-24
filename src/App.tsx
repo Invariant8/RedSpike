@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useCallback, useRef } from 'react';
+import Phaser from 'phaser';
+import { GameCanvas } from './components/GameCanvas';
+import { HUD } from './components/HUD';
+import { GameScene } from './game/scenes/GameScene';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const gameRef = useRef<Phaser.Game | null>(null);
+
+  const handleGameReady = useCallback((game: Phaser.Game) => {
+    gameRef.current = game;
+  }, []);
+
+  const handleRestart = useCallback(() => {
+    if (gameRef.current) {
+      const gameScene = gameRef.current.scene.getScene('GameScene') as GameScene;
+      if (gameScene) {
+        gameScene.restartGame();
+      }
+    }
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app-container">
+      <div className="game-wrapper">
+        <GameCanvas onGameReady={handleGameReady} />
+        <HUD onRestart={handleRestart} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
