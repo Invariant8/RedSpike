@@ -88,7 +88,7 @@ export class Divider extends Phaser.GameObjects.Container {
      /**
       * Get divider bounds
       */
-     getBounds(): { left: number; right: number; top: number; width: number } {
+     getDividerBounds(): { left: number; right: number; top: number; width: number } {
           return {
                left: this.dividerX,
                right: this.dividerX + this.dividerWidth,
@@ -115,7 +115,7 @@ export class Divider extends Phaser.GameObjects.Container {
       * Check if a point is above this divider (for landing)
       */
      isPointAbove(x: number, y: number): boolean {
-          const bounds = this.getBounds();
+          const bounds = this.getDividerBounds();
           return x >= bounds.left && x <= bounds.right && y < bounds.top;
      }
 }

@@ -35,13 +35,17 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
           this.heroRef = heroRef;
           this.speed = speed;
 
-          const bounds = divider.getBounds();
+          const bounds = divider.getDividerBounds();
           const x = Phaser.Math.Between(bounds.left + 30, bounds.right - 30);
-          const y = bounds.top - 20; // Position above the divider
+          // Position bug ON TOP of the divider (same as hero would stand)
+          const y = bounds.top - 20; // top is already TILE_SIZE/2 above divider Y
 
           this.setPosition(x, y);
           this.setActive(true);
           this.setVisible(true);
+
+          // Ensure velocity is 0 initially (prevent falling)
+          this.setVelocity(0, 0);
 
           // Add rotation animation for saw blade effect
           this.scene.tweens.add({
@@ -54,31 +58,42 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
 
      /**
       * Update bug movement - chase hero horizontally if on same divider level
+      * Bug will only chase if hero is on the same platform, otherwise it patrols
       */
      update(): void {
           if (!this.active || !this.targetDivider || !this.heroRef) return;
 
-          const bounds = this.targetDivider.getBounds();
+          const bounds = this.targetDivider.getDividerBounds();
           const heroX = this.heroRef.x;
           const heroY = this.heroRef.y;
+
+          // Reset Y velocity to stay on platform (prevent any drift)
+          this.setVelocityY(0);
 
           // Check if hero is on the same level (within jumping distance)
           const dividerY = this.targetDivider.getY();
           const heroOnSameLevel = Math.abs(heroY - dividerY) < 100;
 
-          if (heroOnSameLevel) {
-               // Chase hero horizontally
-               if (heroX < this.x) {
+          // Also check if hero is within the divider's horizontal bounds
+          // This prevents the bug from running off the platform
+          const heroWithinDividerBounds = heroX >= bounds.left && heroX <= bounds.right;
+
+          if (heroOnSameLevel && heroWithinDividerBounds) {
+               // Chase hero horizontally (only if hero is on this platform)
+               if (heroX < this.x - 10) {
                     this.setVelocityX(-this.speed);
-               } else if (heroX > this.x) {
+               } else if (heroX > this.x + 10) {
                     this.setVelocityX(this.speed);
+               } else {
+                    // Hero is very close, stop
+                    this.setVelocityX(0);
                }
           } else {
-               // Patrol on the divider
+               // Patrol on the divider (patrol back and forth)
                const body = this.body as Phaser.Physics.Arcade.Body;
-               if (this.x <= bounds.left + 20) {
+               if (this.x <= bounds.left + 30) {
                     this.setVelocityX(this.speed);
-               } else if (this.x >= bounds.right - 20) {
+               } else if (this.x >= bounds.right - 30) {
                     this.setVelocityX(-this.speed);
                } else if (body.velocity.x === 0) {
                     // Start moving in random direction
@@ -86,12 +101,12 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
                }
           }
 
-          // Constrain to divider bounds
-          if (this.x < bounds.left + 20) {
-               this.x = bounds.left + 20;
+          // Always constrain to divider bounds (hard stop at edges)
+          if (this.x < bounds.left + 25) {
+               this.x = bounds.left + 25;
                this.setVelocityX(this.speed);
-          } else if (this.x > bounds.right - 20) {
-               this.x = bounds.right - 20;
+          } else if (this.x > bounds.right - 25) {
+               this.x = bounds.right - 25;
                this.setVelocityX(-this.speed);
           }
      }

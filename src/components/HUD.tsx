@@ -96,21 +96,7 @@ export function HUD({ onRestart }: HUDProps) {
                     </div>
                </div>
 
-               {/* Keyboard Hints */}
-               <div className="keyboard-hints">
-                    <div className="hint">
-                         <kbd>←</kbd><kbd>→</kbd>
-                         <span>Move</span>
-                    </div>
-                    <div className="hint">
-                         <kbd>Space</kbd>
-                         <span>Jump</span>
-                    </div>
-                    <div className="hint">
-                         <kbd>Space</kbd><kbd>×2</kbd>
-                         <span>Double Jump</span>
-                    </div>
-               </div>
+
 
                {/* Game Over Overlay */}
                {isGameOver && (

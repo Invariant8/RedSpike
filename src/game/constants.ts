@@ -6,11 +6,11 @@ export const GAME_HEIGHT = 768;
 // Physics
 export const GRAVITY = 800;
 export const HERO_SPEED = 250;
-export const HERO_JUMP_VELOCITY = -450;
-export const HERO_DOUBLE_JUMP_VELOCITY = -400;
+export const HERO_JUMP_VELOCITY = -520;
+export const HERO_DOUBLE_JUMP_VELOCITY = -450;
 
 // Level generation
-export const LEVEL_VERTICAL_GAP = 180; // Vertical distance between levels
+export const LEVEL_VERTICAL_GAP = 150; // Vertical distance between levels (reduced for better reachability)
 export const DIVIDER_MIN_WIDTH = 150;  // Min width of a divider in pixels
 export const DIVIDER_MAX_WIDTH = 350;  // Max width of a divider in pixels
 export const TILE_SIZE = 32;           // Size of each tile in divider

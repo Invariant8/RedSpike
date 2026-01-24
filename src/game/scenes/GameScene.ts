@@ -11,6 +11,7 @@ import {
      GRAVITY,
      CAMERA_LERP,
      CAMERA_OFFSET_Y,
+     TILE_SIZE,
 } from '../constants';
 
 // Event bus for React communication
@@ -50,11 +51,12 @@ export class GameScene extends Phaser.Scene {
           // Create difficulty system
           this.difficulty = new DifficultySystem();
 
-          // Calculate starting position
+          // Calculate starting position - ground level Y where platforms will be
           const startY = GAME_HEIGHT - 100;
 
-          // Create hero
-          this.hero = new Hero(this, GAME_WIDTH / 2, startY - 50);
+          // Create hero - position hero ON TOP of the ground platform
+          // The ground platform will be at startY, hero should be on top of it
+          this.hero = new Hero(this, GAME_WIDTH / 2, startY - TILE_SIZE - 30);
           this.highestY = this.hero.y;
 
           // Set up hero event callbacks

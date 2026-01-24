@@ -10,10 +10,7 @@ export class BootScene extends Phaser.Scene {
      }
 
      create(): void {
-          // Set up any game-wide settings
-          this.scale.pageAlignHorizontally = true;
-          this.scale.pageAlignVertically = true;
-
+          // Game-wide settings are handled by Phaser config
           // Proceed to preload scene
           this.scene.start('PreloadScene');
      }
