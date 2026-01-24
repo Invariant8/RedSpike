@@ -41,6 +41,8 @@ export class TitleBox extends Phaser.Physics.Arcade.Image {
           this.setVisible(false);
 
           const body = this.body as Phaser.Physics.Arcade.StaticBody;
-          body.enable = false;
+          if (body) {
+               body.enable = false;
+          }
      }
 }

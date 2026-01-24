@@ -102,7 +102,9 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
      deactivate(): void {
           this.setActive(false);
           this.setVisible(false);
-          this.setVelocity(0, 0);
+          if (this.body) {
+               this.setVelocity(0, 0);
+          }
           this.scene.tweens.killTweensOf(this);
           this.targetDivider = null;
      }

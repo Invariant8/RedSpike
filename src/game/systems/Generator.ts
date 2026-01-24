@@ -259,8 +259,7 @@ export class Generator {
 
           while (this.currentHighestLevel < topVisibleLevel) {
                this.currentHighestLevel++;
-               const levelY = this.hero.y - (this.currentHighestLevel * LEVEL_VERTICAL_GAP -
-                    (this.levels.get(0)?.y || 0) + (this.levels.get(0)?.y || 0));
+
 
                // Calculate proper Y based on level 0's position
                const baseY = this.levels.get(0)?.y || 0;
@@ -290,22 +289,18 @@ export class Generator {
                divider.getTiles().forEach((tile) => {
                     this.tilesGroup.remove(tile, true, true);
                });
-               divider.deactivate();
+               // divider.deactivate(); // Caused crash because tiles were already destroyed
                divider.destroy();
           });
 
           // Deactivate bugs
           level.bugs.forEach((bug) => {
                this.bugsGroup.remove(bug, true, true);
-               bug.deactivate();
-               bug.destroy();
           });
 
           // Deactivate stars
           level.stars.forEach((star) => {
                this.starsGroup.remove(star, true, true);
-               star.deactivate();
-               star.destroy();
           });
      }
 

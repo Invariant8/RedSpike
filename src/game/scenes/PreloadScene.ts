@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ASSETS, HERO_FRAME_WIDTH, HERO_FRAME_HEIGHT } from '../constants';
+import { ASSETS } from '../constants';
 
 export class PreloadScene extends Phaser.Scene {
      constructor() {
@@ -34,37 +34,19 @@ export class PreloadScene extends Phaser.Scene {
                loadingText.destroy();
           });
 
-          // Load hero spritesheets
-          this.load.spritesheet(ASSETS.HERO_IDLE, 'assets/hero sprite/Idle.png', {
-               frameWidth: HERO_FRAME_WIDTH,
-               frameHeight: HERO_FRAME_HEIGHT,
-          });
-
-          this.load.spritesheet(ASSETS.HERO_RUN, 'assets/hero sprite/Run.png', {
-               frameWidth: HERO_FRAME_WIDTH,
-               frameHeight: HERO_FRAME_HEIGHT,
-          });
-
-          this.load.spritesheet(ASSETS.HERO_JUMP, 'assets/hero sprite/Jump.png', {
-               frameWidth: HERO_FRAME_WIDTH,
-               frameHeight: HERO_FRAME_HEIGHT,
-          });
-
-          this.load.spritesheet(ASSETS.HERO_HURT, 'assets/hero sprite/Hurt.png', {
-               frameWidth: HERO_FRAME_WIDTH,
-               frameHeight: HERO_FRAME_HEIGHT,
-          });
-
-          this.load.spritesheet(ASSETS.HERO_DEAD, 'assets/hero sprite/Dead.png', {
-               frameWidth: HERO_FRAME_WIDTH,
-               frameHeight: HERO_FRAME_HEIGHT,
-          });
+          // Load hero images
+          this.load.image(ASSETS.HERO_IDLE, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_idle.png');
+          this.load.image(ASSETS.HERO_RUN_1, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_walk_a.png');
+          this.load.image(ASSETS.HERO_RUN_2, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_walk_b.png');
+          this.load.image(ASSETS.HERO_JUMP, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_jump.png');
+          this.load.image(ASSETS.HERO_HURT, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_hit.png');
+          this.load.image(ASSETS.HERO_DEAD, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_hit.png');
 
           // Load other assets
-          this.load.image(ASSETS.BUG, 'assets/bug/saw_a.png');
-          this.load.image(ASSETS.COIN, 'assets/coin/coin_01.png');
-          this.load.image(ASSETS.TILE, 'assets/title/tile_0000.png');
-          this.load.image(ASSETS.BACKGROUND, 'assets/background/bg.jpg');
+          this.load.image(ASSETS.BUG, 'assets/kenney_new-platformer-pack-1.1/Sprites/Enemies/Default/saw_a.png');
+          this.load.image(ASSETS.COIN, 'assets/kenney_new-platformer-pack-1.1/Sprites/Tiles/Default/coin_gold.png');
+          this.load.image(ASSETS.TILE, 'assets/kenney_new-platformer-pack-1.1/Sprites/Tiles/Default/terrain_grass_block.png');
+          this.load.image(ASSETS.BACKGROUND, 'assets/kenney_new-platformer-pack-1.1/Sprites/Backgrounds/Default/background_color_hills.png');
      }
 
      create(): void {
@@ -79,7 +61,7 @@ export class PreloadScene extends Phaser.Scene {
           // Hero idle animation
           this.anims.create({
                key: 'hero-idle-anim',
-               frames: this.anims.generateFrameNumbers(ASSETS.HERO_IDLE, { start: 0, end: 7 }),
+               frames: [{ key: ASSETS.HERO_IDLE }],
                frameRate: 10,
                repeat: -1,
           });
@@ -87,15 +69,18 @@ export class PreloadScene extends Phaser.Scene {
           // Hero run animation
           this.anims.create({
                key: 'hero-run-anim',
-               frames: this.anims.generateFrameNumbers(ASSETS.HERO_RUN, { start: 0, end: 7 }),
-               frameRate: 12,
+               frames: [
+                    { key: ASSETS.HERO_RUN_1 },
+                    { key: ASSETS.HERO_RUN_2 }
+               ],
+               frameRate: 8,
                repeat: -1,
           });
 
           // Hero jump animation
           this.anims.create({
                key: 'hero-jump-anim',
-               frames: this.anims.generateFrameNumbers(ASSETS.HERO_JUMP, { start: 0, end: 9 }),
+               frames: [{ key: ASSETS.HERO_JUMP }],
                frameRate: 10,
                repeat: 0,
           });
@@ -103,7 +88,7 @@ export class PreloadScene extends Phaser.Scene {
           // Hero hurt animation
           this.anims.create({
                key: 'hero-hurt-anim',
-               frames: this.anims.generateFrameNumbers(ASSETS.HERO_HURT, { start: 0, end: 3 }),
+               frames: [{ key: ASSETS.HERO_HURT }],
                frameRate: 10,
                repeat: 0,
           });
@@ -111,7 +96,7 @@ export class PreloadScene extends Phaser.Scene {
           // Hero dead animation
           this.anims.create({
                key: 'hero-dead-anim',
-               frames: this.anims.generateFrameNumbers(ASSETS.HERO_DEAD, { start: 0, end: 5 }),
+               frames: [{ key: ASSETS.HERO_DEAD }],
                frameRate: 8,
                repeat: 0,
           });

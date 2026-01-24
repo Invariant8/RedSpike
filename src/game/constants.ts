@@ -41,7 +41,8 @@ export const HERO_FRAME_HEIGHT = 64;
 // Asset keys
 export const ASSETS = {
      HERO_IDLE: 'hero-idle',
-     HERO_RUN: 'hero-run',
+     HERO_RUN_1: 'hero-run-1',
+     HERO_RUN_2: 'hero-run-2',
      HERO_JUMP: 'hero-jump',
      HERO_HURT: 'hero-hurt',
      HERO_DEAD: 'hero-dead',
