@@ -20,6 +20,7 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
           // Set up physics
           const body = this.body as Phaser.Physics.Arcade.Body;
           body.setAllowGravity(false);
+          body.setImmovable(true); // Prevent any movement from physics
           body.setCircle(16);
           body.enable = true; // Ensure enabled initially
 
@@ -36,7 +37,12 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
           this.setVisible(true);
 
           const body = this.body as Phaser.Physics.Arcade.Body;
-          if (body) body.enable = true;
+          if (body) {
+               body.enable = true;
+               body.setAllowGravity(false);
+               body.setImmovable(true);
+               body.setVelocity(0, 0); // Ensure no velocity
+          }
 
           this.value = Math.round(10 * valueMultiplier);
 

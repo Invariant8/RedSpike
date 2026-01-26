@@ -51,8 +51,16 @@ export class Generator {
 
           // Create physics groups
           this.tilesGroup = this.scene.physics.add.staticGroup();
-          this.bugsGroup = this.scene.physics.add.group();
-          this.starsGroup = this.scene.physics.add.group();
+          // Configure bugs group to not use gravity
+          this.bugsGroup = this.scene.physics.add.group({
+               allowGravity: false,
+               immovable: true
+          });
+          // Configure stars group to not use gravity and be immovable
+          this.starsGroup = this.scene.physics.add.group({
+               allowGravity: false,
+               immovable: true
+          });
      }
 
      /**
