@@ -11,7 +11,7 @@ import './GamePage.css';
 export function GamePage() {
     const gameRef = useRef<Phaser.Game | null>(null);
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, isConfigured, loading } = useAuth();
     const lastScoreRef = useRef<{ score: number; level: number }>({ score: 0, level: 0 });
 
     // Track score and level updates
@@ -25,8 +25,8 @@ export function GamePage() {
         };
 
         const handleGameOver = async (score: number) => {
-            // Submit score to leaderboard when game ends
-            if (user) {
+            // Submit score to leaderboard when game ends (only if user is logged in and Firebase is configured)
+            if (user && isConfigured) {
                 try {
                     await submitScore(
                         user.uid,
@@ -38,6 +38,8 @@ export function GamePage() {
                 } catch (error) {
                     console.error('Failed to submit score:', error);
                 }
+            } else {
+                console.log('Offline mode - score not submitted:', score);
             }
         };
 
@@ -50,7 +52,15 @@ export function GamePage() {
             gameEvents.off('levelChange', handleLevelChange);
             gameEvents.off('gameOver', handleGameOver);
         };
-    }, [user]);
+    }, [user, isConfigured]);
+
+    // Redirect to landing if Firebase is configured but user is not logged in
+    // Allow playing in offline mode if Firebase is not configured
+    useEffect(() => {
+        if (isConfigured && !user && !loading) {
+            navigate('/');
+        }
+    }, [user, navigate, isConfigured, loading]);
 
     const handleGameReady = useCallback((game: Phaser.Game) => {
         gameRef.current = game;
@@ -69,14 +79,25 @@ export function GamePage() {
         navigate('/');
     };
 
-    // Redirect to landing if not authenticated
-    useEffect(() => {
-        if (!user) {
-            navigate('/');
-        }
-    }, [user, navigate]);
+    // Show loading while checking auth state
+    if (loading) {
+        return (
+            <div className="game-page-container">
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: '100vh',
+                    color: 'white'
+                }}>
+                    Loading...
+                </div>
+            </div>
+        );
+    }
 
-    if (!user) {
+    // If Firebase is configured but no user, redirect will happen via useEffect
+    if (isConfigured && !user) {
         return null;
     }
 
@@ -86,6 +107,21 @@ export function GamePage() {
                 <button className="back-button" onClick={handleBack}>
                     ← Back to Menu
                 </button>
+                {!isConfigured && (
+                    <div style={{
+                        position: 'absolute',
+                        top: '-40px',
+                        right: 0,
+                        background: 'rgba(255, 165, 0, 0.9)',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: 600
+                    }}>
+                        🎮 Playing in Offline Mode
+                    </div>
+                )}
                 <GameCanvas onGameReady={handleGameReady} />
                 <HUD onRestart={handleRestart} />
             </div>

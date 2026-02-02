@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../firebase/AuthContext';
-import { subscribeToLeaderboard, LeaderboardEntry } from '../firebase/leaderboard';
+import { subscribeToLeaderboard, type LeaderboardEntry } from '../firebase/leaderboard';
 import './LandingPage.css';
 
 export function LandingPage() {
@@ -246,7 +246,7 @@ export function LandingPage() {
                             <div className="leaderboard-entries">
                                 {leaderboard.map((entry, index) => (
                                     <div
-                                        key={entry.odUserId}
+                                        key={entry.userId}
                                         className={`leaderboard-entry ${index < 3 ? `rank-${index + 1}` : ''}`}
                                     >
                                         <div className="entry-rank">

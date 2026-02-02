@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import {
-    User,
     signInWithPopup,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
@@ -8,6 +7,7 @@ import {
     onAuthStateChanged,
     updateProfile
 } from 'firebase/auth';
+import type { User } from 'firebase/auth';
 import { ref, set, get } from 'firebase/database';
 import { auth, googleProvider, database, isConfigured } from './config';
 
