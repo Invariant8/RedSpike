@@ -75,7 +75,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const signInWithGoogle = async () => {
         if (!isConfigured) throw new Error("Firebase is not configured. Please set up your .env file.");
-        await signInWithPopup(auth, googleProvider);
+        try {
+            await signInWithPopup(auth, googleProvider);
+        } catch (error: any) {
+            console.error("Google Sign In Error:", error);
+            if (error.code === 'auth/popup-closed-by-user') {
+                throw new Error("Sign in flow not completed. If you did not close the window, this might be a browser policy issue.");
+            }
+            if (error.code === 'auth/popup-blocked') {
+                throw new Error("Popup was blocked. Please allow popups for this site.");
+            }
+            throw error;
+        }
     };
 
     const signInWithEmail = async (email: string, password: string) => {
