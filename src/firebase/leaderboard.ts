@@ -1,4 +1,4 @@
-import { ref, set, get, onValue, query, orderByChild, limitToLast, off } from 'firebase/database';
+import { ref, set, get, onValue, query, orderByChild, limitToLast, off, type DataSnapshot } from 'firebase/database';
 import { database, isConfigured } from './config';
 
 export interface LeaderboardEntry {
@@ -93,9 +93,9 @@ export function subscribeToLeaderboard(
             limitToLast(limit)
         );
 
-        const handleValue = (snapshot: any) => {
+        const handleValue = (snapshot: DataSnapshot) => {
             const entries: LeaderboardEntry[] = [];
-            snapshot.forEach((child: any) => {
+            snapshot.forEach((child: DataSnapshot) => {
                 entries.push({
                     userId: child.key,
                     ...child.val()
@@ -149,9 +149,9 @@ export async function getUserRank(userId: string): Promise<number> {
         const snapshot = await get(leaderboardQuery);
         const entries: { userId: string; score: number }[] = [];
 
-        snapshot.forEach((child: any) => {
+        snapshot.forEach((child: DataSnapshot) => {
             entries.push({
-                userId: child.key,
+                userId: child.key as string,
                 score: child.val().score
             });
         });

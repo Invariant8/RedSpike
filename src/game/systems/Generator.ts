@@ -185,7 +185,7 @@ export class Generator {
           if (levelIndex > 0) {
                const prevLevel = this.levels.get(levelIndex - 1);
                if (prevLevel) {
-                    this.ensureReachability(prevLevel.dividers, dividerConfigs, y);
+                    this.ensureReachability(prevLevel.dividers, dividerConfigs);
                }
           }
 
@@ -246,8 +246,7 @@ export class Generator {
       */
      private ensureReachability(
           prevDividers: Divider[],
-          newConfigs: DividerConfig[],
-          _newY: number
+          newConfigs: DividerConfig[]
      ): void {
           // Always ensure there's at least one divider that overlaps horizontally
           // with a divider from the previous level for guaranteed reachability

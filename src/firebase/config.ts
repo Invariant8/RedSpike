@@ -19,10 +19,14 @@ const firebaseConfig = {
 const isConfigured = import.meta.env.VITE_FIREBASE_API_KEY &&
     import.meta.env.VITE_FIREBASE_API_KEY !== "YOUR_API_KEY";
 
-let app: any;
-let auth: any;
-let googleProvider: any;
-let database: any;
+import type { FirebaseApp } from 'firebase/app';
+import type { Auth } from 'firebase/auth'; // GoogleAuthProvider is already imported as value
+import type { Database } from 'firebase/database';
+
+let app: FirebaseApp | null;
+let auth: Auth;
+let googleProvider: GoogleAuthProvider;
+let database: Database;
 
 if (isConfigured) {
     // Initialize Firebase normally
@@ -34,9 +38,9 @@ if (isConfigured) {
     console.warn("Firebase not configured. Using mock services.");
     // Mock services to prevent crash
     app = null;
-    auth = { currentUser: null }; // minimal mock
-    googleProvider = {};
-    database = {};
+    auth = { currentUser: null } as unknown as Auth; // minimal mock
+    googleProvider = {} as GoogleAuthProvider;
+    database = {} as Database;
 }
 
 export { app, auth, googleProvider, database, isConfigured };

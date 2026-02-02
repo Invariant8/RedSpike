@@ -165,7 +165,7 @@ export class GameScene extends Phaser.Scene {
           this.cameras.main.setBounds(0, -Infinity, GAME_WIDTH, Infinity);
      }
 
-     update(_time: number, _delta: number): void {
+     update(): void {
           if (this.isGameOver) return;
 
           // Update hero

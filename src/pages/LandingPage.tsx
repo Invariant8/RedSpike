@@ -45,8 +45,8 @@ export function LandingPage() {
             } else {
                 await signInWithEmail(email, password);
             }
-        } catch (err: any) {
-            setError(err.message || 'Authentication failed');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Authentication failed');
         } finally {
             setAuthLoading(false);
         }
@@ -61,8 +61,8 @@ export function LandingPage() {
         setAuthLoading(true);
         try {
             await signInWithGoogle();
-        } catch (err: any) {
-            setError(err.message || 'Google sign-in failed');
+        } catch (err: unknown) {
+            setError((err as Error).message || 'Google sign-in failed');
         } finally {
             setAuthLoading(false);
         }
