@@ -116,30 +116,41 @@ export function LandingPage() {
                 {/* Hero Section */}
                 <section className="hero-section">
                     <div className="hero-glow"></div>
+                    <div className="game-status-bar">
+                        <span className="status-item">SYSTEM: ONLINE</span>
+                        <span className="status-item">LOC: SECTOR 7G</span>
+                        <span className="status-item">VERS: 2.0.26</span>
+                    </div>
                     <h1 className="hero-title">
-                        <span className="title-red">Red</span>
-                        <span className="title-spike">Spike</span>
+                        <span className="title-red glitch-text" data-text="Red">Red</span>
+                        <span className="title-spike glitch-text" data-text="Spike">Spike</span>
                     </h1>
-                    <p className="hero-subtitle">Climb infinitely. Compete globally. Be legendary.</p>
+                    <p className="hero-subtitle gaming-text">Climb infinitely. Compete globally. Be legendary.</p>
 
                     {user ? (
                         <div className="user-welcome">
                             <div className="user-info">
-                                {user.photoURL && (
-                                    <img src={user.photoURL} alt={user.displayName || 'User'} className="user-avatar" />
-                                )}
+                                <div className="avatar-frame main-avatar">
+                                    {user.photoURL ? (
+                                        <img src={user.photoURL} alt={user.displayName || 'User'} className="user-avatar" />
+                                    ) : (
+                                        <div className="player-avatar-placeholder">
+                                            {(user.displayName || 'P').charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
                                 <div className="user-details">
-                                    <span className="welcome-text">Welcome back,</span>
+                                    <span className="welcome-text gaming-text">ACCESS GRANTED</span>
                                     <span className="user-name">{user.displayName || 'Player'}</span>
                                 </div>
                             </div>
                             <div className="action-buttons">
-                                <button className="play-button" onClick={handlePlayGame}>
-                                    <span className="play-icon">🎮</span>
-                                    Play Now
+                                <button className="play-button gaming-text" onClick={handlePlayGame}>
+                                    <span className="play-icon">🚀</span>
+                                    CHALLENGE ASCENT
                                 </button>
-                                <button className="logout-button" onClick={logout}>
-                                    Sign Out
+                                <button className="logout-button gaming-text" onClick={logout}>
+                                    DISCONNECT
                                 </button>
                             </div>
                         </div>
@@ -223,88 +234,162 @@ export function LandingPage() {
                     )}
                 </section>
 
-                {/* Leaderboard Section */}
-                <section className="leaderboard-section">
-                    <div className="leaderboard-header">
-                        <h2 className="leaderboard-title">
-                            <span className="trophy-icon">🏆</span>
-                            Global Leaderboard
-                        </h2>
-                        <p className="leaderboard-subtitle">Top 10 Players Worldwide</p>
+                {/* News Ticker */}
+                <div className="news-ticker">
+                    <div className="ticker-label gaming-text">LIVE_OPS</div>
+                    <div className="ticker-wrapper">
+                        <div className="ticker-content">
+                            <span>NEW SECTOR UNLOCKED: THE CRYSTAL SPIRES</span>
+                            <span>SQUAD "VOID" CURRENTLY DOMINATING THE RANKS</span>
+                            <span>INCOMING PATCH 2.1: GRAVITY ANOMALIES DETECTED</span>
+                            <span>TOP CLIMBER "OMEGA" REACHED LEVEL 99</span>
+                        </div>
                     </div>
+                </div>
 
-                    <div className="leaderboard-table">
-                        {!isConfigured ? (
-                            <div className="leaderboard-empty">
-                                <p>⚠️ Leaderboard requires Firebase configuration</p>
-                            </div>
-                        ) : leaderboard.length === 0 ? (
-                            <div className="leaderboard-empty">
-                                <p>No scores yet. Be the first to climb!</p>
-                            </div>
-                        ) : (
-                            <div className="leaderboard-entries">
-                                {leaderboard.map((entry, index) => (
-                                    <div
-                                        key={entry.userId}
-                                        className={`leaderboard-entry ${index < 3 ? `rank-${index + 1}` : ''}`}
-                                    >
-                                        <div className="entry-rank">
-                                            {index === 0 && <span className="medal">🥇</span>}
-                                            {index === 1 && <span className="medal">🥈</span>}
-                                            {index === 2 && <span className="medal">🥉</span>}
-                                            {index > 2 && <span className="rank-number">#{index + 1}</span>}
-                                        </div>
-                                        <div className="entry-player">
-                                            {entry.photoURL ? (
-                                                <img src={entry.photoURL} alt={entry.displayName} className="player-avatar" />
-                                            ) : (
-                                                <div className="player-avatar-placeholder">
-                                                    {entry.displayName.charAt(0).toUpperCase()}
+                {/* Main Dashboard Layout */}
+                <div className="dashboard-grid">
+                    {/* Leaderboard Section */}
+                    <section className="leaderboard-section">
+                        <div className="section-header">
+                            <h2 className="section-title gaming-text">
+                                <span className="title-icon">📡</span>
+                                RANKING_SIGNAL
+                            </h2>
+                            <div className="header-line"></div>
+                        </div>
+
+                        <div className="leaderboard-table">
+                            {!isConfigured ? (
+                                <div className="leaderboard-empty">
+                                    <p>⚠️ ENCRYPTION ERROR: FIREBASE_NOT_FOUND</p>
+                                </div>
+                            ) : leaderboard.length === 0 ? (
+                                <div className="leaderboard-empty">
+                                    <p>NO DATA DETECTED. BE THE FIRST TO ASCEND.</p>
+                                </div>
+                            ) : (
+                                <div className="leaderboard-entries">
+                                    {leaderboard.map((entry, index) => (
+                                        <div
+                                            key={entry.userId}
+                                            className={`leaderboard-entry ${index < 3 ? `rank-${index + 1}` : ''}`}
+                                        >
+                                            <div className="entry-rank gaming-text">
+                                                {String(index + 1).padStart(2, '0')}
+                                            </div>
+                                            <div className="entry-player">
+                                                <div className="avatar-frame">
+                                                    {entry.photoURL ? (
+                                                        <img src={entry.photoURL} alt={entry.displayName} className="player-avatar" />
+                                                    ) : (
+                                                        <div className="player-avatar-placeholder">
+                                                            {entry.displayName.charAt(0).toUpperCase()}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                            <span className="player-name">{entry.displayName}</span>
-                                        </div>
-                                        <div className="entry-stats">
-                                            <div className="stat-item">
-                                                <span className="stat-icon">⭐</span>
-                                                <span className="stat-value">{entry.score.toLocaleString()}</span>
+                                                <span className="player-name">{entry.displayName}</span>
                                             </div>
-                                            <div className="stat-item">
-                                                <span className="stat-icon">📊</span>
-                                                <span className="stat-value">Lv.{entry.level}</span>
+                                            <div className="entry-stats">
+                                                <div className="stat-item">
+                                                    <span className="stat-label">EXP</span>
+                                                    <span className="stat-value">{entry.score.toLocaleString()}</span>
+                                                </div>
+                                                <div className="stat-item">
+                                                    <span className="stat-label">LVL</span>
+                                                    <span className="stat-value">{entry.level}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </section>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </section>
 
-                {/* Features Section */}
-                <section className="features-section">
-                    <div className="feature-card">
-                        <div className="feature-icon">🚀</div>
-                        <h3>Infinite Climbing</h3>
-                        <p>Scale endless heights through procedurally generated levels</p>
-                    </div>
-                    <div className="feature-card">
-                        <div className="feature-icon">⚡</div>
-                        <h3>Increasing Difficulty</h3>
-                        <p>Face tougher challenges as you ascend higher</p>
-                    </div>
-                    <div className="feature-card">
-                        <div className="feature-icon">🌍</div>
-                        <h3>Global Competition</h3>
-                        <p>Compete with players worldwide on the leaderboard</p>
-                    </div>
-                </section>
+                    {/* Mission Brief Section */}
+                    <section className="mission-brief-section">
+                        <div className="section-header">
+                            <h2 className="section-title gaming-text">
+                                <span className="title-icon">📂</span>
+                                MISSION_OBJECTIVE
+                            </h2>
+                            <div className="header-line"></div>
+                        </div>
+                        <div className="mission-content">
+                            <div className="mission-card">
+                                <div className="mission-icon">🧗</div>
+                                <div className="mission-details">
+                                    <h3 className="gaming-text">INFINITE_ASCENT</h3>
+                                    <p>Scale the procedurally generated Spikes. Gravity increases every 500m.</p>
+                                </div>
+                            </div>
+                            <div className="mission-card">
+                                <div className="mission-icon">⚡</div>
+                                <div className="mission-details">
+                                    <h3 className="gaming-text">SURVIVAL_PROTOCOL</h3>
+                                    <p>Avoid red hazards. Collect blue energy cores to maintain momentum.</p>
+                                </div>
+                            </div>
+                            <div className="mission-card dashboard-stats">
+                                <div className="diag-item">
+                                    <div className="diag-label">GLOBAL_LOAD</div>
+                                    <div className="diag-bar"><div className="diag-fill" style={{ width: '75%' }}></div></div>
+                                </div>
+                                <div className="diag-item">
+                                    <div className="diag-label">ATMOS_STABILITY</div>
+                                    <div className="diag-bar"><div className="diag-fill" style={{ width: '42%' }}></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </main>
+
+            {/* Side UI Elements */}
+            <div className="side-elements">
+                <div className="radar-container">
+                    <div className="radar-sweep"></div>
+                    <div className="radar-grid"></div>
+                    <div className="radar-dot" style={{ top: '20%', left: '30%' }}></div>
+                    <div className="radar-dot" style={{ top: '60%', left: '70%', animationDelay: '1s' }}></div>
+                </div>
+            </div>
 
             {/* Footer */}
             <footer className="landing-footer">
-                <p>© 2026 RedSpike. Climb to greatness.</p>
+                <div className="footer-line"></div>
+                <div className="footer-content">
+                    <div className="footer-section">
+                        <h4 className="gaming-text">SYSTEM_LINKS</h4>
+                        <div className="footer-links">
+                            <a href="#">TERMINAL_ACCESS</a>
+                            <a href="#">VOID_PROTOCOL</a>
+                            <a href="#">CORE_LOGS</a>
+                        </div>
+                    </div>
+                    <div className="footer-section">
+                        <h4 className="gaming-text">SOCIAL_UPLINK</h4>
+                        <div className="footer-links">
+                            <a href="#">DISCORD_NODE</a>
+                            <a href="#">TWITTER_STREAM</a>
+                            <a href="#">DATA_GREGATE</a>
+                        </div>
+                    </div>
+                    <div className="footer-section tech-status">
+                        <div className="status-row">
+                            <span className="label">LATENCY:</span>
+                            <span className="value">14MS</span>
+                        </div>
+                        <div className="status-row">
+                            <span className="label">SERVER_NODE:</span>
+                            <span className="value">A-01</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="footer-bottom">
+                    <p className="gaming-text">© 2026 REDSPIKE_OS // END_TRANSMISSION</p>
+                </div>
             </footer>
         </div>
     );

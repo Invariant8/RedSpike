@@ -2,89 +2,72 @@
 
 .game-page-container {
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
-  padding: 20px;
+  background: var(--bg-dark);
+  padding: 0;
+  margin: 0;
   overflow: hidden;
+  position: relative;
 }
 
 .game-page-wrapper {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 .back-button {
   position: absolute;
-  top: -60px;
+  top: -70px;
   left: 0;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 100px;
-  backdrop-filter: blur(10px);
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  font-family: var(--font-gaming);
+  font-size: 0.7rem;
+  color: var(--accent-blue);
+  background: var(--surface-dark);
+  border: 1px solid var(--accent-blue-glow);
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  text-transform: uppercase;
+  letter-spacing: 2px;
   transition: all 0.3s ease;
   z-index: 100;
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--accent-blue);
+  color: #000;
   transform: translateX(-5px);
+  box-shadow: 0 0 20px var(--accent-blue-glow);
 }
 
-/* Ambient glow effects - inherited from App.css but page-specific */
+/* Ambient glow effects */
 .game-page-container::before {
   content: '';
   position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background:
-    radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-  animation: ambientPulse 8s ease-in-out infinite;
-}
-
-@keyframes ambientPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-/* Floating particles effect */
-.game-page-container::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  background-image:
-    radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(2px 2px at 40% 70%, rgba(255, 255, 255, 0.2), transparent),
-    radial-gradient(1px 1px at 60% 20%, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(2px 2px at 80% 50%, rgba(255, 255, 255, 0.2), transparent),
-    radial-gradient(1px 1px at 10% 80%, rgba(255, 255, 255, 0.25), transparent),
-    radial-gradient(2px 2px at 90% 10%, rgba(255, 255, 255, 0.2), transparent);
+  background:
+    radial-gradient(circle at 10% 10%, var(--primary-red-glow) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, var(--accent-blue-glow) 0%, transparent 40%);
   pointer-events: none;
   z-index: 0;
-  animation: floatParticles 20s linear infinite;
-}
-
-@keyframes floatParticles {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-100vh); }
+  opacity: 0.5;
 }

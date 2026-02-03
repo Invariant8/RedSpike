@@ -1,7 +1,7 @@
 // Game constants for Infinite Climber
 
-export const GAME_WIDTH = 1024;
-export const GAME_HEIGHT = 768;
+export const GAME_WIDTH = window.innerWidth;
+export const GAME_HEIGHT = window.innerHeight;
 
 // Physics
 export const GRAVITY = 800;

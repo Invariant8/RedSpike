@@ -38,12 +38,10 @@ export function GameCanvas({ onGameReady }: GameCanvasProps) {
                ref={containerRef}
                id="game-canvas-container"
                style={{
-                    width: '1024px',
-                    height: '768px',
-                    margin: '0 auto',
-                    borderRadius: '12px',
+                    width: '100vw',
+                    height: '100vh',
                     overflow: 'hidden',
-                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.3)',
+                    background: '#000',
                }}
           />
      );

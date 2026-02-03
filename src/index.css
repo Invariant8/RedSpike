@@ -1,75 +1,273 @@
-/* Base styles and CSS reset */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Russo+One&display=swap");
+
+:root {
+  --primary-red: #ff3e3e;
+  --primary-red-glow: rgba(255, 62, 62, 0.5);
+  --accent-blue: #00f2ff;
+  --accent-blue-glow: rgba(0, 242, 255, 0.5);
+  --bg-dark: #05050a;
+  --surface-dark: rgba(20, 20, 35, 0.8);
+  --font-gaming: "Orbitron", sans-serif;
+  --font-display: "Russo One", sans-serif;
+  --font-main: "Outfit", sans-serif;
+}
 
 *,
 *::before,
 *::after {
-     box-sizing: border-box;
-     margin: 0;
-     padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-     font-size: 16px;
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-     background: #0f0f1a;
-     color: #ffffff;
-     line-height: 1.5;
-     overflow-x: hidden;
+  font-family: var(--font-main);
+  background: var(--bg-dark);
+  color: #ffffff;
+  line-height: 1.5;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Global Game Effects */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.03),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.03)
+    );
+  background-size:
+    100% 4px,
+    3px 100%;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(var(--surface-dark) 1px, transparent 1px),
+    linear-gradient(90deg, var(--surface-dark) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
+  z-index: -1;
+  opacity: 0.2;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.97;
+  }
+  5% {
+    opacity: 0.95;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  20% {
+    opacity: 0.98;
+  }
+  25% {
+    opacity: 0.95;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  35% {
+    opacity: 0.93;
+  }
+  40% {
+    opacity: 0.95;
+  }
+  45% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.98;
+  }
+  55% {
+    opacity: 0.95;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  65% {
+    opacity: 0.93;
+  }
+  70% {
+    opacity: 0.95;
+  }
+  75% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.98;
+  }
+  85% {
+    opacity: 0.95;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  95% {
+    opacity: 0.93;
+  }
+  100% {
+    opacity: 0.95;
+  }
+}
+
+.gaming-text {
+  font-family: var(--font-gaming);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+
+.glitch-text:hover::before {
+  visibility: visible;
+  left: 2px;
+  text-shadow: -2px 0 var(--accent-blue);
+  background: var(--bg-dark);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+.glitch-text:hover::after {
+  visibility: visible;
+  left: -2px;
+  text-shadow: 2px 0 var(--primary-red);
+  background: var(--bg-dark);
+  animation: glitch-anim2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip-path: inset(80% 0 0 0);
+  }
+  20% {
+    clip-path: inset(20% 0 60% 0);
+  }
+  40% {
+    clip-path: inset(40% 0 10% 0);
+  }
+  60% {
+    clip-path: inset(10% 0 80% 0);
+  }
+  80% {
+    clip-path: inset(60% 0 20% 0);
+  }
+  100% {
+    clip-path: inset(30% 0 40% 0);
+  }
+}
+
+@keyframes glitch-anim2 {
+  0% {
+    clip-path: inset(10% 0 40% 0);
+  }
+  20% {
+    clip-path: inset(60% 0 20% 0);
+  }
+  40% {
+    clip-path: inset(10% 0 80% 0);
+  }
+  60% {
+    clip-path: inset(40% 0 10% 0);
+  }
+  80% {
+    clip-path: inset(20% 0 60% 0);
+  }
+  100% {
+    clip-path: inset(80% 0 0 0);
+  }
 }
 
 /* Remove default button styles */
 button {
-     font-family: inherit;
-     cursor: pointer;
-     border: none;
-     outline: none;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
 }
 
 /* Remove default list styles */
 ul,
 ol {
-     list-style: none;
+  list-style: none;
 }
 
 /* Remove default link styles */
 a {
-     text-decoration: none;
-     color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* Focus styles for accessibility */
 :focus-visible {
-     outline: 2px solid rgba(99, 102, 241, 0.8);
-     outline-offset: 2px;
+  outline: 2px solid rgba(99, 102, 241, 0.8);
+  outline-offset: 2px;
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-     width: 8px;
-     height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-     background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-     background: rgba(99, 102, 241, 0.5);
-     border-radius: 4px;
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-     background: rgba(99, 102, 241, 0.7);
+  background: rgba(99, 102, 241, 0.7);
 }
 
 /* Selection styling */
 ::selection {
-     background: rgba(99, 102, 241, 0.4);
-     color: #ffffff;
+  background: rgba(99, 102, 241, 0.4);
+  color: #ffffff;
 }
