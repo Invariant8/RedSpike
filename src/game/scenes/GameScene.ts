@@ -21,7 +21,8 @@ export class GameScene extends Phaser.Scene {
      private hero!: Hero;
      private generator!: Generator;
      private difficulty!: DifficultySystem;
-     private background!: Phaser.GameObjects.TileSprite;
+     private background!: Phaser.GameObjects.Image;
+     private backgroundStartY: number = 0;
      private highestY: number = 0;
      private isGameOver: boolean = false;
 
@@ -33,14 +34,27 @@ export class GameScene extends Phaser.Scene {
           // Reset game state
           this.isGameOver = false;
 
-          // Create scrolling background
-          this.background = this.add.tileSprite(
+          // Create scrolling background (non-repeating)
+          this.background = this.add.image(
                GAME_WIDTH / 2,
                GAME_HEIGHT / 2,
-               GAME_WIDTH,
-               GAME_HEIGHT * 3,
                ASSETS.BACKGROUND
           );
+
+          // Scale background to fit game width while maintaining aspect ratio
+          const bgTexture = this.textures.get(ASSETS.BACKGROUND);
+          const bgFrame = bgTexture.getSourceImage();
+          const bgWidth = bgFrame.width;
+
+          const scaleX = GAME_WIDTH / bgWidth;
+          // Scale Y proportionally
+          const scaleY = scaleX;
+          this.background.setScale(scaleX, scaleY);
+
+          // Store initial Y position for parallax calculation
+          this.backgroundStartY = GAME_HEIGHT / 2;
+
+          // Position background at initial camera view
           this.background.setScrollFactor(0);
           this.background.setDepth(-10);
 
@@ -189,8 +203,9 @@ export class GameScene extends Phaser.Scene {
           const currentLevel = this.generator.getCurrentHeroLevel();
           gameEvents.emit('levelChange', currentLevel);
 
-          // Update background parallax
-          this.background.tilePositionY = cameraY * 0.3;
+          // Update background parallax - move background up as player climbs
+          // Using a slower rate (0.4) so background moves slower than camera, creating depth
+          this.background.y = this.backgroundStartY - cameraY * 0.4;
 
           // Update all active bugs
           const bugs = this.generator.getBugsGroup().getChildren() as Bug[];

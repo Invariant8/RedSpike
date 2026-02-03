@@ -18,16 +18,16 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
           scene.add.existing(this);
           scene.physics.add.existing(this);
 
-          // Set up physics
-          this.setDisplaySize(40, 40);
-          this.setCircle(20);
+          // Set up physics - cyberpunk security drone
+          this.setDisplaySize(60, 60);
+          this.setCircle(30);
 
           const body = this.body as Phaser.Physics.Arcade.Body;
           body.setAllowGravity(false);
           body.setImmovable(true); // Prevent physics from pushing the bug
 
           // Set depth so bug renders ABOVE dividers
-          this.setDepth(10);
+          this.setDepth(100);
 
           this.setActive(false);
           this.setVisible(false);
@@ -66,17 +66,29 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
           }
 
           // Ensure depth is set for proper rendering above dividers
-          this.setDepth(10);
+          this.setDepth(100);
 
           // Kill any existing tweens before adding new one to prevent conflicts
           this.scene.tweens.killTweensOf(this);
 
-          // Add rotation animation for saw blade effect
+          // Add hover animation for security drone (bob up and down)
           this.scene.tweens.add({
                targets: this,
-               angle: 360,
-               duration: 1000,
+               y: this.fixedY - 8,
+               duration: 800,
+               yoyo: true,
                repeat: -1,
+               ease: 'Sine.easeInOut',
+          });
+
+          // Add subtle tilt animation
+          this.scene.tweens.add({
+               targets: this,
+               angle: 5,
+               duration: 1200,
+               yoyo: true,
+               repeat: -1,
+               ease: 'Sine.easeInOut',
           });
      }
 
@@ -86,6 +98,16 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
       */
      update(): void {
           if (!this.active || !this.targetDivider || !this.heroRef || !this.dividerBounds) return;
+
+          // FORCE visibility and opacity every frame to prevent any external modifications
+          this.setAlpha(1);
+          this.setVisible(true);
+          this.clearTint();
+
+          // Ensure depth is maintained (above platforms)
+          if (this.depth !== 100) {
+               this.setDepth(100);
+          }
 
           // Use cached bounds instead of recalculating every frame
           const bounds = this.dividerBounds;

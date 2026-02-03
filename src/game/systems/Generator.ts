@@ -44,10 +44,35 @@ export class Generator {
           this.difficulty = difficulty;
           this.hero = hero;
 
-          // Calculate max jump reach based on physics
-          // Max horizontal distance during full jump arc (time = 2v/g for up+down)
-          const jumpTime = (Math.abs(HERO_JUMP_VELOCITY) / GRAVITY) * 2 + (Math.abs(HERO_DOUBLE_JUMP_VELOCITY) / GRAVITY) * 2;
-          this.maxJumpDistance = 250 * jumpTime * 0.6; // 60% of theoretical max for safety
+          // Calculate a safer, more realistic max jump reach:
+          // - single jump airtime approx: 2 * v / g
+          // - double jump adds extra upward impulse (we approximate extra airtime)
+          const singleAirtime = 2 * Math.abs(HERO_JUMP_VELOCITY) / GRAVITY;
+          const extraDoubleAirtime = Math.abs(HERO_DOUBLE_JUMP_VELOCITY) / GRAVITY; // approximate
+          const maxAirtime = singleAirtime + extraDoubleAirtime;
+
+          // Try to use hero's horizontal capability, otherwise fallback to a safe default
+          let horizSpeed = 200; // fallback (px/s)
+          try {
+               // Many hero implementations expose body or max speed
+               // Use available values when present
+               // @ts-ignore
+               const body = (this.hero as any).body;
+               if (body && body.maxVelocity && body.maxVelocity.x) {
+                    // body.maxVelocity is often set in Arcade, use it
+                    // @ts-ignore
+                    horizSpeed = Math.max(100, Math.abs(body.maxVelocity.x));
+               } else if ((this.hero as any).getMaxHorizontalSpeed) {
+                    // optional method on hero
+                    // @ts-ignore
+                    horizSpeed = (this.hero as any).getMaxHorizontalSpeed() || horizSpeed;
+               }
+          } catch {
+               // ignore and use fallback
+          }
+
+          // maxJumpDistance approximated as horizontalSpeed * airtime, with safety margin
+          this.maxJumpDistance = horizSpeed * maxAirtime * 0.9;
 
           // Create physics groups
           this.tilesGroup = this.scene.physics.add.staticGroup();
@@ -123,7 +148,7 @@ export class Generator {
           const stars: Star[] = [];
           for (let i = 0; i < STARS_PER_LEVEL; i++) {
                const star = new Star(this.scene, 0, 0);
-               const starX = 100 + i * (GAME_WIDTH - 200) / (STARS_PER_LEVEL - 1);
+               const starX = 100 + i * (GAME_WIDTH - 200) / Math.max(1, (STARS_PER_LEVEL - 1));
                const starY = y - TILE_SIZE - 40;
                star.spawn(starX, starY, 1);
                stars.push(star);
@@ -164,21 +189,30 @@ export class Generator {
                const x1 = Phaser.Math.Between(0, 100);
                const x2 = totalWidth - width2 - Phaser.Math.Between(0, 100);
 
-               dividerConfigs.push({ x: x1, y, width: width1 });
-               dividerConfigs.push({ x: x2, y, width: width2 });
+               dividerConfigs.push({ x: Phaser.Math.Clamp(x1, 0, totalWidth - width1), y, width: width1 });
+               dividerConfigs.push({ x: Phaser.Math.Clamp(x2, 0, totalWidth - width2), y, width: width2 });
           } else {
                // Three dividers - left, center, right with two gaps
-               const width1 = Phaser.Math.Between(widthRange.min, widthRange.max * 0.7);
-               const width2 = Phaser.Math.Between(widthRange.min, widthRange.max * 0.7);
-               const width3 = Phaser.Math.Between(widthRange.min, widthRange.max * 0.7);
+               const width1 = Phaser.Math.Between(widthRange.min, Math.floor(widthRange.max * 0.7));
+               const width2 = Phaser.Math.Between(widthRange.min, Math.floor(widthRange.max * 0.7));
+               const width3 = Phaser.Math.Between(widthRange.min, Math.floor(widthRange.max * 0.7));
 
                const x1 = 0;
                const x3 = totalWidth - width3;
-               const x2 = Phaser.Math.Between(x1 + width1 + minGap, x3 - width2 - minGap);
+               // Ensure center has enough space between left and right
+               const x2Min = x1 + width1 + minGap;
+               const x2Max = x3 - width2 - minGap;
+               let x2 = x2Min;
+               if (x2Max > x2Min) {
+                    x2 = Phaser.Math.Between(x2Min, x2Max);
+               } else {
+                    // fallback: place center in middle if not enough space
+                    x2 = Math.floor((totalWidth - width2) / 2);
+               }
 
-               dividerConfigs.push({ x: x1, y, width: width1 });
-               dividerConfigs.push({ x: x2, y, width: width2 });
-               dividerConfigs.push({ x: x3, y, width: width3 });
+               dividerConfigs.push({ x: Phaser.Math.Clamp(x1, 0, totalWidth - width1), y, width: width1 });
+               dividerConfigs.push({ x: Phaser.Math.Clamp(x2, 0, totalWidth - width2), y, width: width2 });
+               dividerConfigs.push({ x: Phaser.Math.Clamp(x3, 0, totalWidth - width3), y, width: width3 });
           }
 
           // Ensure reachability from previous level
@@ -229,6 +263,36 @@ export class Generator {
                this.starsGroup.add(star);
           }
 
+          // Optional: place a small trail of guiding stars between a reachable pair of dividers
+          // pick a pair where horizontal distance is reasonable
+          if (dividers.length >= 2) {
+               // find any pair with horizontal distance < maxJumpDistance * 0.9
+               for (let a = 0; a < dividerConfigs.length; a++) {
+                    for (let b = a + 1; b < dividerConfigs.length; b++) {
+                         const cA = dividerConfigs[a];
+                         const cB = dividerConfigs[b];
+                         const centerA = cA.x + cA.width / 2;
+                         const centerB = cB.x + cB.width / 2;
+                         const dx = Math.abs(centerA - centerB);
+                         if (dx < this.maxJumpDistance * 0.9) {
+                              // place small line of stars between them
+                              const steps = 3;
+                              for (let s = 1; s <= steps; s++) {
+                                   const t = s / (steps + 1);
+                                   const sx = Phaser.Math.Interpolation.Linear([centerA, centerB], t) + Phaser.Math.Between(-10, 10);
+                                   const sy = y - TILE_SIZE - 30 - Math.floor(t * 50); // arc
+                                   const trailStar = new Star(this.scene, 0, 0);
+                                   trailStar.spawn(sx, sy, this.difficulty.getStarValueMultiplier());
+                                   stars.push(trailStar);
+                                   this.starsGroup.add(trailStar);
+                              }
+                              a = dividerConfigs.length; // break outer loop
+                              break;
+                         }
+                    }
+               }
+          }
+
           const levelData: LevelData = {
                levelIndex,
                y,
@@ -248,33 +312,41 @@ export class Generator {
           prevDividers: Divider[],
           newConfigs: DividerConfig[]
      ): void {
-          // Always ensure there's at least one divider that overlaps horizontally
-          // with a divider from the previous level for guaranteed reachability
-          if (prevDividers.length === 0 || newConfigs.length === 0) return;
+          if (!prevDividers || prevDividers.length === 0 || !newConfigs || newConfigs.length === 0) return;
 
-          // Get a random previous divider to base our reachability on
-          const prevDivider = prevDividers[Phaser.Math.Between(0, prevDividers.length - 1)];
-          const prevBounds = prevDivider.getDividerBounds();
-          const prevCenterX = prevBounds.left + prevBounds.width / 2;
-
-          // Check if any new divider is reachable (overlaps horizontally or is within jump distance)
+          // Try to find any pair (prevDivider, newConfig) that is horizontally reachable.
+          // If none found, move the best candidate above the closest prev divider.
           let hasReachable = false;
-          for (const config of newConfigs) {
-               const configCenterX = config.x + config.width / 2;
-               const horizontalDistance = Math.abs(prevCenterX - configCenterX);
 
-               // Consider reachable if horizontal distance is within max jump + some overlap
-               if (horizontalDistance < this.maxJumpDistance * 0.8) {
-                    hasReachable = true;
-                    break;
+          // Evaluate all pairs and choose best match if none directly reachable
+          type Candidate = { prevCenter: number; newIndex: number; horizDist: number; prevIdx: number };
+          const candidates: Candidate[] = [];
+
+          for (let p = 0; p < prevDividers.length; p++) {
+               const prevBounds = prevDividers[p].getDividerBounds();
+               const prevCenterX = prevBounds.left + prevBounds.width / 2;
+
+               for (let n = 0; n < newConfigs.length; n++) {
+                    const config = newConfigs[n];
+                    const configCenterX = config.x + config.width / 2;
+                    const horizontalDistance = Math.abs(prevCenterX - configCenterX);
+
+                    if (horizontalDistance < this.maxJumpDistance * 0.9) {
+                         hasReachable = true;
+                         break;
+                    } else {
+                         candidates.push({ prevCenter: prevCenterX, newIndex: n, horizDist: horizontalDistance, prevIdx: p });
+                    }
                }
+               if (hasReachable) break;
           }
 
-          // If not reachable, adjust the first new divider to be directly above a previous divider
-          if (!hasReachable) {
-               const targetConfig = newConfigs[0];
-               // Position it to overlap with the previous divider's center
-               const newX = prevCenterX - targetConfig.width / 2;
+          if (!hasReachable && candidates.length > 0) {
+               // pick the candidate with smallest horizontal distance and nudge that new config above the prev center
+               candidates.sort((a, b) => a.horizDist - b.horizDist);
+               const best = candidates[0];
+               const targetConfig = newConfigs[best.newIndex];
+               const newX = best.prevCenter - targetConfig.width / 2;
                targetConfig.x = Phaser.Math.Clamp(newX, 0, GAME_WIDTH - targetConfig.width);
           }
      }
@@ -289,9 +361,6 @@ export class Generator {
           while (this.currentHighestLevel < topVisibleLevel) {
                this.currentHighestLevel++;
 
-
-               // Calculate proper Y based on level 0's position
-
                // Get the Y position of the previous level (level - 1)
                const prevLevelData = this.levels.get(this.currentHighestLevel - 1);
                let prevY = this.levels.get(0)?.y || 0; // Default to level 0 y if not found
@@ -299,8 +368,7 @@ export class Generator {
                if (prevLevelData) {
                     prevY = prevLevelData.y;
                } else if (this.currentHighestLevel > 1) {
-                    // Fallback if previous level missing (shouldn't happen with sequential generation)
-                    // Estimate based on level 0
+                    // Fallback: estimate
                     prevY = (this.levels.get(0)?.y || 0) - (this.currentHighestLevel - 1) * LEVEL_VERTICAL_GAP;
                }
 
@@ -313,15 +381,19 @@ export class Generator {
           }
 
           // Recycle levels that are too far below the camera
-          // Increased threshold significantly to prevent platforms from disappearing while hero is on them
           const recycleThreshold = cameraY + 1200; // Much further below visible area
 
-          this.levels.forEach((level, index) => {
+          // Collect keys to delete to avoid modifying map during iteration
+          const keysToDelete: number[] = [];
+          this.levels.forEach((level, key) => {
                if (level.y > recycleThreshold) {
                     this.recycleLevel(level);
-                    this.levels.delete(index);
+                    keysToDelete.push(key);
                }
           });
+          for (const k of keysToDelete) {
+               this.levels.delete(k);
+          }
      }
 
      /**
@@ -331,20 +403,36 @@ export class Generator {
           // Deactivate dividers
           level.dividers.forEach((divider) => {
                divider.getTiles().forEach((tile) => {
-                    this.tilesGroup.remove(tile, true, true);
+                    try {
+                         this.tilesGroup.remove(tile, true, true);
+                    } catch {
+                         // ignore if removal fails (already removed/destroyed)
+                         try { tile.destroy(); } catch { /* no-op */ }
+                    }
                });
-               // divider.deactivate(); // Caused crash because tiles were already destroyed
-               divider.destroy();
+               try {
+                    divider.destroy();
+               } catch {
+                    // ignore
+               }
           });
 
           // Deactivate bugs
           level.bugs.forEach((bug) => {
-               this.bugsGroup.remove(bug, true, true);
+               try {
+                    this.bugsGroup.remove(bug, true, true);
+               } catch {
+                    try { bug.destroy(); } catch { /* no-op */ }
+               }
           });
 
           // Deactivate stars
           level.stars.forEach((star) => {
-               this.starsGroup.remove(star, true, true);
+               try {
+                    this.starsGroup.remove(star, true, true);
+               } catch {
+                    try { star.destroy(); } catch { /* no-op */ }
+               }
           });
      }
 
