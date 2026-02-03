@@ -154,19 +154,31 @@ export class GameScene extends Phaser.Scene {
      }
 
      private handleStarCollision(
-          heroObj: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
-          starObj: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
+          obj1: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
+          obj2: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
      ): void {
-          const hero = heroObj as Hero;
-          const star = starObj as Star;
+          // Phaser may pass objects in either order, so we need to check
+          let hero: Hero;
+          let star: Star;
+
+          if (obj1 instanceof Hero) {
+               hero = obj1;
+               star = obj2 as Star;
+          } else {
+               hero = obj2 as Hero;
+               star = obj1 as Star;
+          }
 
           if (star.active) {
                const points = star.collect();
+               console.log('Collected star, points:', points); // Debug
                hero.addScore(points);
 
                // Immediately disable physics body to prevent multiple collisions
                const body = star.body as Phaser.Physics.Arcade.Body;
-               body.enable = false;
+               if (body) {
+                    body.enable = false;
+               }
           }
      }
 

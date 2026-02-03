@@ -14,14 +14,14 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
           scene.add.existing(this);
           scene.physics.add.existing(this);
 
-          // Set up display - larger for data chip visibility
-          this.setDisplaySize(40, 40);
+          // Set up display
+          this.setDisplaySize(32, 32);
 
           // Set up physics
           const body = this.body as Phaser.Physics.Arcade.Body;
           body.setAllowGravity(false);
           body.setImmovable(true); // Prevent any movement from physics
-          body.setCircle(20);
+          body.setCircle(16);
           body.enable = true; // Ensure enabled initially
 
           this.setActive(false);
@@ -29,7 +29,7 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
      }
 
      /**
-      * Spawn data chip at position
+      * Spawn coin at position
       */
      spawn(x: number, y: number, valueMultiplier: number = 1): void {
           this.setPosition(x, y);
@@ -42,35 +42,21 @@ export class Star extends Phaser.Physics.Arcade.Sprite {
                body.setAllowGravity(false);
                body.setImmovable(true);
                body.setVelocity(0, 0); // Ensure no velocity
+               // Reset physics body position
+               body.reset(x, y);
           }
 
           this.value = Math.round(10 * valueMultiplier);
 
-          // Add floating animation - holographic hover effect
-          this.scene.tweens.add({
-               targets: this,
-               y: y - 12,
-               duration: 1000,
-               yoyo: true,
-               repeat: -1,
-               ease: 'Sine.easeInOut',
-          });
+          // Kill any existing tweens first
+          this.scene.tweens.killTweensOf(this);
 
-          // Add holographic flicker/glow effect
+          // Add shine effect (scale pulse)
           this.scene.tweens.add({
                targets: this,
-               alpha: 0.7,
-               duration: 300,
-               yoyo: true,
-               repeat: -1,
-               ease: 'Sine.easeInOut',
-          });
-
-          // Add subtle rotation for holographic effect
-          this.scene.tweens.add({
-               targets: this,
-               angle: 10,
-               duration: 1500,
+               scaleX: 1.2,
+               scaleY: 1.2,
+               duration: 500,
                yoyo: true,
                repeat: -1,
                ease: 'Sine.easeInOut',

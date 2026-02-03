@@ -18,9 +18,9 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
           scene.add.existing(this);
           scene.physics.add.existing(this);
 
-          // Set up physics - cyberpunk security drone
-          this.setDisplaySize(60, 60);
-          this.setCircle(30);
+          // Set up physics
+          this.setDisplaySize(40, 40);
+          this.setCircle(20);
 
           const body = this.body as Phaser.Physics.Arcade.Body;
           body.setAllowGravity(false);
@@ -71,24 +71,12 @@ export class Bug extends Phaser.Physics.Arcade.Sprite {
           // Kill any existing tweens before adding new one to prevent conflicts
           this.scene.tweens.killTweensOf(this);
 
-          // Add hover animation for security drone (bob up and down)
+          // Add rotation animation for saw blade effect
           this.scene.tweens.add({
                targets: this,
-               y: this.fixedY - 8,
-               duration: 800,
-               yoyo: true,
+               angle: 360,
+               duration: 1000,
                repeat: -1,
-               ease: 'Sine.easeInOut',
-          });
-
-          // Add subtle tilt animation
-          this.scene.tweens.add({
-               targets: this,
-               angle: 5,
-               duration: 1200,
-               yoyo: true,
-               repeat: -1,
-               ease: 'Sine.easeInOut',
           });
      }
 

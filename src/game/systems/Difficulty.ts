@@ -57,13 +57,22 @@ export class DifficultySystem {
      }
 
      /**
-      * Get number of bugs per divider
+      * Get number of bugs per divider (when a bug spawns)
       */
      getBugsPerDivider(): number {
-          // Start with 1, increase to 2 at level 10, 3 at level 25
-          if (this.currentLevel >= 25) return 3;
-          if (this.currentLevel >= 10) return 2;
+          // Start with 1, increase to 2 at level 20, 3 at level 40
+          if (this.currentLevel >= 40) return 3;
+          if (this.currentLevel >= 20) return 2;
           return 1;
+     }
+
+     /**
+      * Get probability of spawning bugs on a divider (0-1)
+      * Lower at start, increases with level
+      */
+     getBugSpawnProbability(): number {
+          // Start at 30% chance, increase by 5% per level, cap at 80%
+          return Math.min(0.8, 0.3 + this.currentLevel * 0.05);
      }
 
      /**

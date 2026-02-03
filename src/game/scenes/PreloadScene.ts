@@ -34,18 +34,18 @@ export class PreloadScene extends Phaser.Scene {
                loadingText.destroy();
           });
 
-          // Load cyberpunk hero images
-          this.load.image(ASSETS.HERO_IDLE, 'assets/cyberpunk_hero_idle.png');
-          this.load.image(ASSETS.HERO_RUN_1, 'assets/cyberpunk_hero_run1.png');
-          this.load.image(ASSETS.HERO_RUN_2, 'assets/cyberpunk_hero_run2.png');
-          this.load.image(ASSETS.HERO_JUMP, 'assets/cyberpunk_hero_jump.png');
-          this.load.image(ASSETS.HERO_HURT, 'assets/cyberpunk_hero_hurt.png');
-          this.load.image(ASSETS.HERO_DEAD, 'assets/cyberpunk_hero_hurt.png');
+          // Load hero images
+          this.load.image(ASSETS.HERO_IDLE, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_idle.png');
+          this.load.image(ASSETS.HERO_RUN_1, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_walk_a.png');
+          this.load.image(ASSETS.HERO_RUN_2, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_walk_b.png');
+          this.load.image(ASSETS.HERO_JUMP, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_jump.png');
+          this.load.image(ASSETS.HERO_HURT, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_hit.png');
+          this.load.image(ASSETS.HERO_DEAD, 'assets/kenney_new-platformer-pack-1.1/Sprites/Characters/Default/character_beige_hit.png');
 
-          // Load cyberpunk game assets
-          this.load.image(ASSETS.BUG, 'assets/cyberpunk_enemy.png');
-          this.load.image(ASSETS.COIN, 'assets/cyberpunk_coin.png');
-          this.load.image(ASSETS.TILE, 'assets/cyberpunk_platform.png');
+          // Load other assets
+          this.load.image(ASSETS.BUG, 'assets/kenney_new-platformer-pack-1.1/Sprites/Enemies/Default/saw_a.png');
+          this.load.image(ASSETS.COIN, 'assets/kenney_new-platformer-pack-1.1/Sprites/Tiles/Default/coin_gold.png');
+          this.load.image(ASSETS.TILE, 'assets/bricks_grey.svg');
           // Load the cyberpunk city background
           this.load.image(ASSETS.BACKGROUND, 'assets/Gemini_Generated_Image_d5ztlmd5ztlmd5zt.png');
      }
